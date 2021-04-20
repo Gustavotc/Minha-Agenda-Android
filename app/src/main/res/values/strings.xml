@@ -7,4 +7,5 @@
     <string name="insert_password">Digite sua senha</string>
     <string name="create_acc">Não tem conta ? Cadastre-se!</string>
     <string name="signup">Cadastrar</string>
+    <string name="logout">Sair</string>
 </resources>

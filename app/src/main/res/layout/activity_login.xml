@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+    android:fillViewport="true">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".activity.LoginActivity">
+    tools:context=".activity.LoginActivity"
+    android:background="@color/colorPrimary"
+    android:gravity="center">
 
     <ImageView
         android:layout_width="150dp"
@@ -38,14 +46,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="@string/signin" />
+        android:text="@string/signin"
+        android:background="@color/light_grey"
+        />
 
     <TextView
+        android:layout_marginTop="8dp"
         android:id="@+id/txtCreateAcc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:onClick="openCreateAcc"
-        android:text="@string/create_acc" />
+        android:text="@string/create_acc"
+        android:textColor="@android:color/white"/>
 
 </LinearLayout>
+
+</ScrollView>
