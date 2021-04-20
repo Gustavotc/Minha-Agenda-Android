@@ -41,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.logoutOption :
                 signOut();
                 break;
+            case R.id.newContactOption :
+                //ToDo add contact
+                break;
         }
 
         return super.onOptionsItemSelected(item);

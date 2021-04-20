@@ -8,4 +8,11 @@
         app:showAsAction="never"
         />
 
+    <item
+        android:id="@+id/newContactOption"
+        android:title="@string/new_contact"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/ic_add_person_24"
+        />
+
 </menu>

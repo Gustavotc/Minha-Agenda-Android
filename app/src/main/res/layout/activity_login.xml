@@ -25,30 +25,20 @@
 
     <EditText
         android:id="@+id/edit_login_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:ems="10"
+        style="@style/custom_edit_text"
         android:hint="@string/insert_email"
         android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/edit_login_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:ems="10"
+        style="@style/custom_edit_text"
         android:hint="@string/insert_password"
         android:inputType="textPassword" />
 
     <Button
         android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/signin"
-        android:background="@color/light_grey"
-        />
+        style="@style/custom_button"
+        android:text="@string/signin" />
 
     <TextView
         android:layout_marginTop="8dp"
@@ -58,7 +48,8 @@
         android:gravity="center_horizontal"
         android:onClick="openCreateAcc"
         android:text="@string/create_acc"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/white"
+        android:textSize="16sp"/>
 
 </LinearLayout>
 

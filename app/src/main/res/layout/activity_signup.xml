@@ -12,23 +12,18 @@
 
     <EditText
         android:id="@+id/edit_signup_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        style="@style/custom_edit_text"
         android:hint="@string/insert_email"
         android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/edit_signup_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
+        style="@style/custom_edit_text"
         android:hint="@string/insert_password"
         android:inputType="textPassword" />
 
     <Button
         android:id="@+id/btnSignUp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/custom_button"
         android:text="@string/signup" />
 </LinearLayout>
