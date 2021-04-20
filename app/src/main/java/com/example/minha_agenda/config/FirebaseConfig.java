@@ -7,13 +7,22 @@ import com.google.firebase.database.FirebaseDatabase;
 public final class FirebaseConfig {
 
     private static DatabaseReference firebaseReference;
+    private static FirebaseAuth auth;
 
+    //Returns a firebase reference
     public static DatabaseReference getFirebase() {
 
         if( firebaseReference == null){
             firebaseReference = FirebaseDatabase.getInstance().getReference();
         }
-
         return firebaseReference;
+    }
+
+    //Returns a firebase auth object
+    public static FirebaseAuth getFirebaseAuth() {
+        if( auth == null ) {
+            auth = FirebaseAuth.getInstance();
+        }
+        return auth;
     }
 }

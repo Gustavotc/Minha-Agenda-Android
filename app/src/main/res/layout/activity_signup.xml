@@ -11,7 +11,7 @@
     tools:context=".activity.SignupActivity">
 
     <EditText
-        android:id="@+id/edit_singup_email"
+        android:id="@+id/edit_signup_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"

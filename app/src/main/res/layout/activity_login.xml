@@ -6,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
-    tools:context=".activity.LoginActivity"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:context=".activity.LoginActivity">
 
     <ImageView
         android:layout_width="150dp"
@@ -16,36 +16,36 @@
         android:background="@color/colorPrimaryDark" />
 
     <EditText
-        android:layout_marginTop="20dp"
         android:id="@+id/edit_login_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="@string/insert_email"
-        android:inputType="textPersonName" />
+        android:inputType="textEmailAddress" />
 
     <EditText
-        android:layout_marginTop="20dp"
         android:id="@+id/edit_login_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="@string/insert_password"
         android:inputType="textPassword" />
 
     <Button
-        android:layout_marginTop="20dp"
-        android:id="@+id/button"
+        android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="@string/signin" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/txtCreateAcc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="@string/create_acc"
-        android:onClick="openCreateAcc" />
+        android:onClick="openCreateAcc"
+        android:text="@string/create_acc" />
 
 </LinearLayout>
