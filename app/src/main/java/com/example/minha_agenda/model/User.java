@@ -1,5 +1,9 @@
 package com.example.minha_agenda.model;
 
+import com.example.minha_agenda.config.FirebaseConfig;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
+
 //Clas to create an user model
 public class User {
 
@@ -11,6 +15,12 @@ public class User {
 
     }
 
+    public void saveUserInfos() {
+        DatabaseReference firebaseReference = FirebaseConfig.getFirebase();
+        firebaseReference.child("users").child( getId() ).setValue( this );
+    }
+
+    @Exclude //Ignore when save in Database
     public String getId() {
         return id;
     }
@@ -27,6 +37,7 @@ public class User {
         this.email = email;
     }
 
+    @Exclude
     public String getPassword() {
         return password;
     }
