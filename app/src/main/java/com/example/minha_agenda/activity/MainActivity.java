@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,16 +14,27 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.example.minha_agenda.R;
+import com.example.minha_agenda.adapter.AdapterContacts;
 import com.example.minha_agenda.config.FirebaseConfig;
+import com.example.minha_agenda.model.Contact;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
+    private RecyclerView recyclerContacts;
+    private ArrayList<String> contactsList;
+    private DatabaseReference firebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +42,57 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         auth = FirebaseConfig.getFirebaseAuth();
+        recyclerContacts = findViewById(R.id.recyclerContacts);
+
+        contactsList = new ArrayList<>();
+
+        //Adapter configs
+        final AdapterContacts adapter = new AdapterContacts( contactsList );
+
+        //Get Database Contacts
+        auth = FirebaseConfig.getFirebaseAuth();
+
+        firebase = FirebaseConfig.getFirebase()
+                .child("contacts")
+                .child(auth.getUid());
+
+        //teste(); APAGAR
+
+        //RecyclerView configs
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getApplicationContext() );
+        recyclerContacts.setLayoutManager( layoutManager );
+        recyclerContacts.setHasFixedSize(true);
+        recyclerContacts.addItemDecoration(new DividerItemDecoration(this, LinearLayout.VERTICAL));
+        recyclerContacts.setAdapter( adapter );
+
+        //Listener to recover User contacts
+        firebase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                contactsList.clear();
+
+                //List Contacts
+                for (DataSnapshot data: snapshot.getChildren()) {
+                    Contact contact = data.getValue( Contact.class );
+                    contactsList.add(contact.getName());
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void teste(){
+        contactsList = new ArrayList<>();
+        contactsList.add("Gustavo Chinalia");
+        contactsList.add("Guilherme Chinalia");
+        contactsList.add("Luciana Chinalia");
     }
 
     @Override
@@ -56,40 +121,5 @@ public class MainActivity extends AppCompatActivity {
         auth.signOut();
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
         finish();
-    }
-
-    private void openAddContact(){
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-
-        //Dialog configs
-        alertDialog.setTitle("Novo contato");
-        alertDialog.setMessage("Nome do usuário");
-        alertDialog.setCancelable(false);
-
-        EditText editName = new EditText(MainActivity.this);
-        alertDialog.setView(editName);
-
-        alertDialog.setMessage("Telefone do usuário");
-        EditText editPhone = new EditText(MainActivity.this);
-        alertDialog.setView(editPhone);
-
-        //Buttons configs
-        alertDialog.setPositiveButton("Cadastrar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        alertDialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        alertDialog.create();
-        alertDialog.show();
     }
 }

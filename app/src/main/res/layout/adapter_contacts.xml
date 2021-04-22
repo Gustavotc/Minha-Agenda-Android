@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/textContact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nome"
+        android:textSize="25sp"
+        android:background="@color/colorAccent"
+        android:padding="16dp"
+        android:layout_margin="8dp"
+        android:drawableEnd="@drawable/ic_person_24"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:drawableTint="@android:color/black"/>
+</LinearLayout>
