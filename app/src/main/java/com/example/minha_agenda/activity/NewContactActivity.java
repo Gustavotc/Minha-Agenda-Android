@@ -5,6 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,12 +15,26 @@ import android.widget.Toast;
 
 import com.example.minha_agenda.R;
 import com.example.minha_agenda.config.FirebaseConfig;
+import com.example.minha_agenda.model.CEP;
 import com.example.minha_agenda.model.Contact;
+import com.example.minha_agenda.service.HTTPService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 //Class to add a new contact to the Agenda
 public class NewContactActivity extends AppCompatActivity {
@@ -27,6 +44,7 @@ public class NewContactActivity extends AppCompatActivity {
     private EditText editPhone;
     private EditText editEmail;
     private EditText editCep;
+    private EditText editAdress;
     private Button btnAdd;
     private DatabaseReference firebase;
 
@@ -46,7 +64,31 @@ public class NewContactActivity extends AppCompatActivity {
         editPhone = findViewById(R.id.editNewContactPhone);
         editEmail = findViewById(R.id.editNewContactEmail);
         editCep = findViewById(R.id.editNewContactCep);
+        editAdress = findViewById(R.id.editNewContactAdress);
         btnAdd = findViewById(R.id.btnNewContact);
+
+        editCep.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if(s.length() == 8) {
+                    searchCep(s.toString());
+                }
+                else {
+                    editAdress.setText("");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+               // Log.i("TextChange", "depois");
+
+            }
+        });
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,6 +98,7 @@ public class NewContactActivity extends AppCompatActivity {
                 String phone = editPhone.getText().toString();
                 String email = editEmail.getText().toString();
                 String cep = editCep.getText().toString();
+                String adress = editAdress.getText().toString();
 
                 //Create a new contact object
                 final Contact contact = new Contact();
@@ -63,10 +106,11 @@ public class NewContactActivity extends AppCompatActivity {
                 contact.setPhone(phone);
                 contact.setEmail(email);
                 contact.setCep(cep);
+                contact.setAdress(adress);
 
                 //Validations
                 //Check if all informations were given
-                if( !name.isEmpty() && !phone.isEmpty() && !email.isEmpty() && !cep.isEmpty() ) {
+                if( !name.isEmpty() && !phone.isEmpty() && !email.isEmpty() && !cep.isEmpty() && !adress.isEmpty()) {
 
                     firebase = FirebaseConfig.getFirebase().child("contacts").child(userAuth.getUid()).child(name);
 
@@ -87,7 +131,6 @@ public class NewContactActivity extends AppCompatActivity {
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-
                         }
                     });
                 }
@@ -96,5 +139,19 @@ public class NewContactActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void searchCep(String cep) {
+
+      HTTPService service = new HTTPService(cep);
+        try {
+            CEP info = service.execute().get();
+
+            editAdress.setText( info.getLogradouro().equals("") ? info.getLocalidade() : info.getLogradouro()  );
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

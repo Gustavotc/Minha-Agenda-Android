@@ -11,12 +11,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.example.minha_agenda.R;
+import com.example.minha_agenda.RecyclerItemClickListener;
 import com.example.minha_agenda.adapter.AdapterContacts;
 import com.example.minha_agenda.config.FirebaseConfig;
 import com.example.minha_agenda.model.Contact;
@@ -28,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +40,19 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerContacts;
     private ArrayList<String> contactsList;
     private DatabaseReference firebase;
+    private ValueEventListener valueEventListenerContacts;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        firebase.addValueEventListener( valueEventListenerContacts );
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebase.removeEventListener( valueEventListenerContacts );
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerContacts.setAdapter( adapter );
 
         //Listener to recover User contacts
-        firebase.addValueEventListener(new ValueEventListener() {
+        valueEventListenerContacts = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
@@ -85,7 +103,36 @@ public class MainActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
 
             }
-        });
+        };
+
+        //Click Event
+        recyclerContacts.addOnItemTouchListener(
+            new RecyclerItemClickListener(
+                    getApplicationContext(),
+                    recyclerContacts,
+                    new RecyclerItemClickListener.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            String name = contactsList.get( position );
+
+                            Intent intent = new Intent(MainActivity.this, ContactInfoActivity.class);
+                            intent.putExtra("name", name);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onLongItemClick(View view, int position) {
+
+                        }
+
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                        }
+                    }
+            )
+        );
+
     }
 
     private void teste(){

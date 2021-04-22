@@ -47,6 +47,14 @@
         android:hint="CEP"
         android:inputType="text" />
 
+    <EditText
+        android:id="@+id/editNewContactAdress"
+        android:enabled="false"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Endereço"
+        android:inputType="text" />
+
     <Button
         android:id="@+id/btnNewContact"
         style="@style/custom_button"

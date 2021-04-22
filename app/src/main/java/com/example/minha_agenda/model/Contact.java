@@ -7,8 +7,9 @@ public class Contact {
     private String phone;
     private String email;
     private String cep;
+    private String adress;
 
-    public Contact(){
+    public Contact() {
     }
 
     public String getName() {
@@ -41,5 +42,13 @@ public class Contact {
 
     public void setCep(String cep) {
         this.cep = cep;
+    }
+
+    public String getAdress() {
+        return adress;
+    }
+
+    public void setAdress(String adress) {
+        this.adress = adress;
     }
 }
