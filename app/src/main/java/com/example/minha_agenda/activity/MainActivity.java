@@ -74,8 +74,6 @@ public class MainActivity extends AppCompatActivity {
                 .child("contacts")
                 .child(auth.getUid());
 
-        //teste(); APAGAR
-
         //RecyclerView configs
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getApplicationContext() );
         recyclerContacts.setLayoutManager( layoutManager );
@@ -133,13 +131,6 @@ public class MainActivity extends AppCompatActivity {
             )
         );
 
-    }
-
-    private void teste(){
-        contactsList = new ArrayList<>();
-        contactsList.add("Gustavo Chinalia");
-        contactsList.add("Guilherme Chinalia");
-        contactsList.add("Luciana Chinalia");
     }
 
     @Override

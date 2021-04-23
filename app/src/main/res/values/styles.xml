@@ -16,8 +16,8 @@
         <item name="android:layout_width"> match_parent </item>
         <item name="android:layout_height"> wrap_content </item>
         <item name="android:layout_marginTop"> 20dp </item>
-        <item name="android:textColor"> @android:color/white </item>
         <item name="backgroundTint"> @color/colorPrimaryDark </item>
+        <item name="android:textColor"> @android:color/white </item>
         <item name="android:textSize"> 20sp </item>
         <item name="android:padding" > 16dp </item>
     </style>
@@ -27,6 +27,13 @@
         <item name="android:layout_height" > wrap_content </item>
         <item name="android:layout_marginTop"> 20dp </item>
         <item name="android:textColor" > @android:color/white </item>
+    </style>
+
+    <style name="custom_edit_text_ContactInfo" >
+        <item name="android:layout_width" > match_parent </item>
+        <item name="android:layout_height" > wrap_content </item>
+        <item name="android:layout_marginTop"> 20dp </item>
+        <item name="android:enabled"> false </item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

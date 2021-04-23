@@ -1,16 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    tools:context=".activity.ContactInfoActivity">
+    android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/textView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:context=".activity.ContactInfoActivity">
+
+
+        <EditText
+            android:id="@+id/editInfoName"
+            style="@style/custom_edit_text_ContactInfo"
+            android:inputType="textPersonName"
+            android:text= "Nome" />
+
+        <EditText
+            android:id="@+id/editInfoPhone"
+            style="@style/custom_edit_text_ContactInfo"
+            android:inputType="phone"
+            android:text="Telefone" />
+
+        <EditText
+            android:id="@+id/editInfoEmail"
+            style="@style/custom_edit_text_ContactInfo"
+            android:inputType="textEmailAddress"
+            android:text="Email" />
+
+        <EditText
+            android:id="@+id/editInfoCep"
+            style="@style/custom_edit_text_ContactInfo"
+            android:inputType="textPersonName"
+            android:text="CEP" />
+
+        <EditText
+            android:id="@+id/editInfoAdress"
+            style="@style/custom_edit_text_ContactInfo"
+            android:inputType="textPersonName"
+            android:text="Endereço" />
+
+        <Button
+            android:id="@+id/btnEditContact"
+            style="@style/custom_button"
+            android:text="@string/edit_contact"
+            android:backgroundTint="@android:color/white"
+            android:enabled="false"
+            android:visibility="invisible"
+            />
+    </LinearLayout>
+
+</ScrollView>

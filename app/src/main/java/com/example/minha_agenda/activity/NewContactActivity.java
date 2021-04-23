@@ -85,8 +85,6 @@ public class NewContactActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-               // Log.i("TextChange", "depois");
-
             }
         });
 
@@ -147,7 +145,10 @@ public class NewContactActivity extends AppCompatActivity {
         try {
             CEP info = service.execute().get();
 
-            editAdress.setText( info.getLogradouro().equals("") ? info.getLocalidade() : info.getLogradouro()  );
+            if(info.getLocalidade() != null){
+                editAdress.setText( info.getLogradouro().equals("") ? info.getLocalidade() : info.getLogradouro()  );
+            }
+
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
