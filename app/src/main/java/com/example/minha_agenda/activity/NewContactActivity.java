@@ -3,7 +3,15 @@ package com.example.minha_agenda.activity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -80,10 +88,9 @@ public class NewContactActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if(s.length() == 9) {
+                if (s.length() == 9) {
                     searchCep(s.toString());
-                }
-                else {
+                } else {
                     editAdress.setText("");
                 }
             }
@@ -113,7 +120,7 @@ public class NewContactActivity extends AppCompatActivity {
 
                 //Validations
                 //Check if all informations were given
-                if( !name.isEmpty() && !phone.isEmpty() && !email.isEmpty() && !cep.isEmpty() && !adress.isEmpty()) {
+                if (!name.isEmpty() && !phone.isEmpty() && !email.isEmpty() && !cep.isEmpty() && !adress.isEmpty()) {
 
                     firebase = FirebaseConfig.getFirebase().child("contacts").child(userAuth.getUid()).push();
 
@@ -122,13 +129,14 @@ public class NewContactActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                             //Case the contact name already exists
-                            if( snapshot.getValue() != null ) {
+                            if (snapshot.getValue() != null) {
                                 Toast.makeText(NewContactActivity.this, "Contato já cadastrado", Toast.LENGTH_LONG).show();
-                            }
-                            else  { //Case it's a new contact name
-                                firebase.setValue( contact ); //Save the new contact in the database
+                            } else { //Case it's a new contact name
+                                firebase.setValue(contact); //Save the new contact in the database
                                 finish();
                                 Toast.makeText(NewContactActivity.this, "Contato adicionado com sucesso", Toast.LENGTH_LONG).show();
+
+                                showNotification(contact.getName());
                             }
 
                         }
@@ -137,8 +145,7 @@ public class NewContactActivity extends AppCompatActivity {
                         public void onCancelled(@NonNull DatabaseError error) {
                         }
                     });
-                }
-                else{ //Case user didn't fill any text field
+                } else { //Case user didn't fill any text field
                     Toast.makeText(NewContactActivity.this, "Preencha todos os campos", Toast.LENGTH_LONG).show();
                 }
             }
@@ -149,12 +156,12 @@ public class NewContactActivity extends AppCompatActivity {
 
         cep = cep.replaceAll("(-)", "");
 
-      HTTPService service = new HTTPService(cep);
+        HTTPService service = new HTTPService(cep);
         try {
             CEP info = service.execute().get();
 
-            if(info.getLocalidade() != null){
-                editAdress.setText( info.getLogradouro().equals("") ? info.getLocalidade() : info.getLogradouro()  );
+            if (info.getLocalidade() != null) {
+                editAdress.setText(info.getLogradouro().equals("") ? info.getLocalidade() : info.getLogradouro());
             }
 
         } catch (ExecutionException e) {
@@ -176,4 +183,45 @@ public class NewContactActivity extends AppCompatActivity {
         MaskTextWatcher maskCep = new MaskTextWatcher(editCep, cep);
         editCep.addTextChangedListener(maskCep);
     }
+
+
+    private void showNotification(String name) {
+        createNotificationChannel();
+
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "ID_01")
+                .setSmallIcon(R.drawable.ic_person_24)
+                .setContentTitle("Novo Contato")
+                .setContentText("Você adicionou " + name + " aos seus contatos!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(1, builder.build());
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Chanel_Name";
+            String description = ("Channel_Description");
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel("ID_01", name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
 }
