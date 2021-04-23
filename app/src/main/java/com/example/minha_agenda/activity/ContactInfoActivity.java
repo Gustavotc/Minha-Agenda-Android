@@ -1,6 +1,7 @@
 package com.example.minha_agenda.activity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -18,6 +19,8 @@ import android.widget.Toast;
 import com.example.minha_agenda.R;
 import com.example.minha_agenda.config.FirebaseConfig;
 import com.example.minha_agenda.model.Contact;
+import com.github.rtoshiro.util.format.SimpleMaskFormatter;
+import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -130,16 +133,40 @@ public class ContactInfoActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         //Allows editions and shows Edit Contact button
-        if (item.getItemId() == R.id.editContactButton) {
-            editName.setEnabled(true);
-            editPhone.setEnabled(true);
-            editEmail.setEnabled(true);
-            editCep.setEnabled(true);
-            editAdress.setEnabled(true);
-            btnEdit.setVisibility(View.VISIBLE);
-            btnEdit.setEnabled(true);
+        switch (item.getItemId()) {
+            case R.id.editContactButton:
+                editName.setEnabled(true);
+                editPhone.setEnabled(true);
+                editEmail.setEnabled(true);
+                editCep.setEnabled(true);
+                editAdress.setEnabled(true);
+                btnEdit.setVisibility(View.VISIBLE);
+                btnEdit.setEnabled(true);
+                setMasks();
+                break;
+            case R.id.deleteContactButton:
+                firebase.removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                        finish();
+                        Toast.makeText(ContactInfoActivity.this, "Contato removido", Toast.LENGTH_LONG).show();
+                    }
+                });
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setMasks() {
+
+        //Phone mask
+        SimpleMaskFormatter phone = new SimpleMaskFormatter("(NN) NNNNN-NNNN");
+        MaskTextWatcher maskPhone = new MaskTextWatcher(editPhone, phone);
+        editPhone.addTextChangedListener(maskPhone);
+
+        //CEP mask
+        SimpleMaskFormatter cep = new SimpleMaskFormatter("NNNNN-NNN");
+        MaskTextWatcher maskCep = new MaskTextWatcher(editCep, cep);
+        editCep.addTextChangedListener(maskCep);
     }
 }

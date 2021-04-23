@@ -18,6 +18,8 @@ import com.example.minha_agenda.config.FirebaseConfig;
 import com.example.minha_agenda.model.CEP;
 import com.example.minha_agenda.model.Contact;
 import com.example.minha_agenda.service.HTTPService;
+import com.github.rtoshiro.util.format.SimpleMaskFormatter;
+import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -67,6 +69,9 @@ public class NewContactActivity extends AppCompatActivity {
         editAdress = findViewById(R.id.editNewContactAdress);
         btnAdd = findViewById(R.id.btnNewContact);
 
+        //Set edit text masks
+        setMasks();
+
         editCep.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -75,7 +80,7 @@ public class NewContactActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if(s.length() == 8) {
+                if(s.length() == 9) {
                     searchCep(s.toString());
                 }
                 else {
@@ -122,6 +127,7 @@ public class NewContactActivity extends AppCompatActivity {
                             }
                             else  { //Case it's a new contact name
                                 firebase.setValue( contact ); //Save the new contact in the database
+                                finish();
                                 Toast.makeText(NewContactActivity.this, "Contato adicionado com sucesso", Toast.LENGTH_LONG).show();
                             }
 
@@ -141,6 +147,8 @@ public class NewContactActivity extends AppCompatActivity {
 
     private void searchCep(String cep) {
 
+        cep = cep.replaceAll("(-)", "");
+
       HTTPService service = new HTTPService(cep);
         try {
             CEP info = service.execute().get();
@@ -154,5 +162,18 @@ public class NewContactActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void setMasks() {
+
+        //Phone mask
+        SimpleMaskFormatter phone = new SimpleMaskFormatter("(NN) NNNNN-NNNN");
+        MaskTextWatcher maskPhone = new MaskTextWatcher(editPhone, phone);
+        editPhone.addTextChangedListener(maskPhone);
+
+        //CEP mask
+        SimpleMaskFormatter cep = new SimpleMaskFormatter("NNNNN-NNN");
+        MaskTextWatcher maskCep = new MaskTextWatcher(editCep, cep);
+        editCep.addTextChangedListener(maskCep);
     }
 }
