@@ -38,7 +38,7 @@ public class ContactInfoActivity extends AppCompatActivity {
     private DatabaseReference firebase;
     private FirebaseAuth auth;
 
-    private String contactName;
+    private String contactId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +50,8 @@ public class ContactInfoActivity extends AppCompatActivity {
         //Recover contact name from user selection
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-             this.contactName = extras.getString("name");
+             this.contactId = extras.getString("id");
+             Log.i("ContactKey", "Recebido: " + contactId);
         }
 
         editName = findViewById(R.id.editInfoName);
@@ -58,7 +59,7 @@ public class ContactInfoActivity extends AppCompatActivity {
         editEmail = findViewById(R.id.editInfoEmail);
         editCep = findViewById(R.id.editInfoCep);
         editAdress = findViewById(R.id.editInfoAdress);
-        btnEdit = (Button) findViewById(R.id.btnEditContact);
+        btnEdit = findViewById(R.id.btnEditContact);
 
         //Get database user auth
         auth = FirebaseConfig.getFirebaseAuth();
@@ -67,7 +68,7 @@ public class ContactInfoActivity extends AppCompatActivity {
         firebase = FirebaseConfig.getFirebase()
                 .child("contacts")
                 .child(auth.getUid())
-                .child(contactName);
+                .child(contactId);
 
         //Get Database Contact Infos and show in EditTexts, disabled for edition
         firebase.addListenerForSingleValueEvent(new ValueEventListener() {

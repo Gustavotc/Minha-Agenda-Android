@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private RecyclerView recyclerContacts;
     private ArrayList<String> contactsList;
+    private ArrayList<String> contactsIdList;
     private DatabaseReference firebase;
     private ValueEventListener valueEventListenerContacts;
 
@@ -63,9 +64,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerContacts = findViewById(R.id.recyclerContacts);
 
         contactsList = new ArrayList<>();
+        contactsIdList = new ArrayList<>();
 
         //Adapter configs
-        final AdapterContacts adapter = new AdapterContacts( contactsList );
+        final AdapterContacts adapter = new AdapterContacts( contactsList, contactsIdList );
 
         //Get Database Contacts
         auth = FirebaseConfig.getFirebaseAuth();
@@ -87,10 +89,14 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
                 contactsList.clear();
+                contactsIdList.clear();
 
                 //List Contacts
                 for (DataSnapshot data: snapshot.getChildren()) {
                     Contact contact = data.getValue( Contact.class );
+                    contactsIdList.add(data.getKey());
+                    Log.i("ContactKey", data.getKey());
+                    System.out.println(contactsIdList);
                     contactsList.add(contact.getName());
                 }
 
@@ -111,10 +117,11 @@ public class MainActivity extends AppCompatActivity {
                     new RecyclerItemClickListener.OnItemClickListener() {
                         @Override
                         public void onItemClick(View view, int position) {
-                            String name = contactsList.get( position );
+                            String id = contactsIdList.get( position );
 
                             Intent intent = new Intent(MainActivity.this, ContactInfoActivity.class);
-                            intent.putExtra("name", name);
+                            intent.putExtra("id", id);
+                            Log.i("Id", id);
                             startActivity(intent);
                         }
 

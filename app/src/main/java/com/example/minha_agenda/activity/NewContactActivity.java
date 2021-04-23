@@ -110,7 +110,7 @@ public class NewContactActivity extends AppCompatActivity {
                 //Check if all informations were given
                 if( !name.isEmpty() && !phone.isEmpty() && !email.isEmpty() && !cep.isEmpty() && !adress.isEmpty()) {
 
-                    firebase = FirebaseConfig.getFirebase().child("contacts").child(userAuth.getUid()).child(name);
+                    firebase = FirebaseConfig.getFirebase().child("contacts").child(userAuth.getUid()).push();
 
                     firebase.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override

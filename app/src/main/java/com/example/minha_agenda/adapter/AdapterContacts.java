@@ -15,9 +15,11 @@ import java.util.List;
 public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.MyViewHolder> {
 
     private List<String> listNames;
+    private List<String> listId;
 
-    public AdapterContacts(List<String> list) {
+    public AdapterContacts(List<String> list, List<String> listId) {
         this.listNames = list;
+        this.listId = listId;
     }
 
     @NonNull
@@ -35,7 +37,7 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.MyView
 
         String names = listNames.get(position);
         holder.name.setText(names);
-
+        holder.id = listId.get(position);
     }
 
     @Override
@@ -46,6 +48,7 @@ public class AdapterContacts extends RecyclerView.Adapter<AdapterContacts.MyView
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView name;
+        String id;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
