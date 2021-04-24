@@ -11,14 +11,13 @@
     android:focusableInTouchMode="true"
     android:focusable="true">
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/editSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/search"
-        android:focusedByDefault="false" />
+        android:hint="Pesquisar contato"
+        android:drawableRight="@drawable/ic_search_24"
+        android:completionThreshold="1"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerContacts"

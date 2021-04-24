@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth userId;
     private RecyclerView recyclerContacts;
-    private EditText editSearch;
+    private AutoCompleteTextView editSearch;
     private ArrayList<String> contactsList;
     private ArrayList<String> contactsIdList;
     private DatabaseReference firebase;
@@ -48,6 +50,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         firebase.addValueEventListener( valueEventListenerContacts );
+
+        ArrayAdapter<String> adapterNames = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, contactsList);
+
+        editSearch.setAdapter(adapterNames);
     }
 
     @Override
@@ -61,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Find componets
         userId           = FirebaseConfig.getFirebaseAuth();
         recyclerContacts = findViewById(R.id.recyclerContacts);
         editSearch       = findViewById(R.id.editSearch);
@@ -85,18 +93,6 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
-
-        //Search for contact
-        /*editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                if(!hasFocus)
-                    searchContact(editSearch.getText().toString(), adapter);
-            }
-        }); */
-
-        //Adapter
 
         //Get Database Contacts
         userId = FirebaseConfig.getFirebaseAuth();
@@ -170,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return super.onCreateOptionsMenu(menu);
+
     }
 
     @Override

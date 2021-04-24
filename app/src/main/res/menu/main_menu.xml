@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/logoutOption"
-        android:title="@string/logout"
-        app:showAsAction="never"
-        />
-
-    <item
         android:id="@+id/newContactOption"
         android:title="@string/new_contact"
         app:showAsAction="ifRoom"
@@ -18,6 +12,12 @@
     <item
         android:id="@+id/newOrderOption"
         android:title="Ordenar por nome"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/logoutOption"
+        android:title="@string/logout"
         app:showAsAction="never"
         />
 
