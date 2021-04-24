@@ -7,7 +7,18 @@
     android:orientation="vertical"
     tools:context=".activity.MainActivity"
     android:background="@color/light_grey"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
+
+    <EditText
+        android:id="@+id/editSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/search"
+        android:focusedByDefault="false" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerContacts"

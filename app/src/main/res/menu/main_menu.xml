@@ -15,4 +15,10 @@
         android:icon="@drawable/ic_add_person_24"
         />
 
+    <item
+        android:id="@+id/newOrderOption"
+        android:title="Ordenar por nome"
+        app:showAsAction="never"
+        />
+
 </menu>

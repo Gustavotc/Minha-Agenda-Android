@@ -1,16 +1,15 @@
 package com.example.minha_agenda.activity;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,20 +27,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.EventListener;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FirebaseAuth auth;
+    private FirebaseAuth userId;
     private RecyclerView recyclerContacts;
+    private EditText editSearch;
     private ArrayList<String> contactsList;
     private ArrayList<String> contactsIdList;
     private DatabaseReference firebase;
     private ValueEventListener valueEventListenerContacts;
+    private AdapterContacts adapter;
 
     @Override
     protected void onStart() {
@@ -60,21 +61,49 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        auth = FirebaseConfig.getFirebaseAuth();
+        userId           = FirebaseConfig.getFirebaseAuth();
         recyclerContacts = findViewById(R.id.recyclerContacts);
+        editSearch       = findViewById(R.id.editSearch);
 
         contactsList = new ArrayList<>();
         contactsIdList = new ArrayList<>();
 
         //Adapter configs
-        final AdapterContacts adapter = new AdapterContacts( contactsList, contactsIdList );
+         adapter = new AdapterContacts( contactsList, contactsIdList );
+
+        editSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchContact(editSearch.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        //Search for contact
+        /*editSearch.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                if(!hasFocus)
+                    searchContact(editSearch.getText().toString(), adapter);
+            }
+        }); */
+
+        //Adapter
 
         //Get Database Contacts
-        auth = FirebaseConfig.getFirebaseAuth();
+        userId = FirebaseConfig.getFirebaseAuth();
 
         firebase = FirebaseConfig.getFirebase()
                 .child("contacts")
-                .child(auth.getUid());
+                .child(userId.getUid());
 
         //RecyclerView configs
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager( getApplicationContext() );
@@ -95,8 +124,6 @@ public class MainActivity extends AppCompatActivity {
                 for (DataSnapshot data: snapshot.getChildren()) {
                     Contact contact = data.getValue( Contact.class );
                     contactsIdList.add(data.getKey());
-                    Log.i("ContactKey", data.getKey());
-                    System.out.println(contactsIdList);
                     contactsList.add(contact.getName());
                 }
 
@@ -118,10 +145,8 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onItemClick(View view, int position) {
                             String id = contactsIdList.get( position );
-
                             Intent intent = new Intent(MainActivity.this, ContactInfoActivity.class);
                             intent.putExtra("id", id);
-                            Log.i("Id", id);
                             startActivity(intent);
                         }
 
@@ -157,14 +182,70 @@ public class MainActivity extends AppCompatActivity {
             case R.id.newContactOption :
                 startActivity(new Intent(MainActivity.this, NewContactActivity.class));
                 break;
+            case R.id.newOrderOption :
+                orderByName();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     private void signOut() {
-        auth.signOut();
+        userId.signOut();
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
         finish();
+    }
+
+    private void searchContact(String name) {
+
+    firebase.orderByChild("name").startAt(name).endAt(name+"\uf8ff").addValueEventListener(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+            contactsList.clear();
+            contactsIdList.clear();
+
+            //List Contacts
+            for (DataSnapshot data: snapshot.getChildren()) {
+                Contact contact = data.getValue( Contact.class );
+                contactsIdList.add(data.getKey());
+                contactsList.add(contact.getName());
+            }
+
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+        }
+    });
+
+    }
+
+    private void orderByName() {
+
+        final Query contactOrder = firebase.orderByChild("name");
+        contactOrder.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                contactsList.clear();
+                contactsIdList.clear();
+
+                //List Contacts
+                for (DataSnapshot data: snapshot.getChildren()) {
+                    Contact contact = data.getValue( Contact.class );
+                    contactsIdList.add(data.getKey());
+                    contactsList.add(contact.getName());
+                }
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 }

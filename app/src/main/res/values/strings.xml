@@ -10,4 +10,5 @@
     <string name="logout">Sair</string>
     <string name="new_contact">Novo contato</string>
     <string name="edit_contact">Editar Contato</string>
+    <string name="search">Pesquisar</string>
 </resources>

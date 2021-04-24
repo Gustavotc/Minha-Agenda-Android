@@ -17,8 +17,8 @@
             android:parentActivityName=".activity.MainActivity"> </activity>
         <activity
             android:name=".activity.SignupActivity"
-            android:parentActivityName=".activity.LoginActivity"></activity>
-        <activity android:name=".activity.MainActivity" />
+            android:parentActivityName=".activity.LoginActivity"> </activity>
+        <activity android:name=".activity.MainActivity" android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
