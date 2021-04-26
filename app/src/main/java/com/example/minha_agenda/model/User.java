@@ -4,7 +4,8 @@ import com.example.minha_agenda.config.FirebaseConfig;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
-//Clas to create an user model
+
+//Clas to create an User Object Model
 public class User {
 
     private String id;

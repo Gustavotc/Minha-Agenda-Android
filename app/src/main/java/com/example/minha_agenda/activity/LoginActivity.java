@@ -20,46 +20,37 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
+//Class to create the login activity
 public class LoginActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
     private Button btnLogin;
     private User user;
-    private  FirebaseAuth auth;
+    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Verify if the user is logged
-        verifyUserLogin();
-
+        //Find components
         email    = findViewById(R.id.edit_login_email);
         password = findViewById(R.id.edit_login_password);
         btnLogin = findViewById(R.id.btnLogin);
 
+        //Verify if the user is logged
+        verifyUserLogin();
+
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                user = new User();
-                user.setEmail( email.getText().toString() );
-                user.setPassword( password.getText().toString() );
-
-                //Verify empty fields
-                if (!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty()){
-                    validateLogin();
-                }
-                else {
-                    Toast.makeText(LoginActivity.this, "Um ou mais campos estão vazios", Toast.LENGTH_LONG).show();
-                }
+                verifyInputs();
             }
         });
     }
 
-    //Function to Validade user email and password
+    //Function to Validades user email and password
     private void validateLogin() {
 
         auth = FirebaseConfig.getFirebaseAuth();
@@ -119,4 +110,18 @@ public class LoginActivity extends AppCompatActivity {
         startActivity( intent );
     }
 
+    //Function to verify if all fields were filled
+    private void verifyInputs() {
+        user = new User();
+        user.setEmail( email.getText().toString() );
+        user.setPassword( password.getText().toString() );
+
+        //Verify empty fields
+        if (!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty()){
+            validateLogin();
+        }
+        else {
+            Toast.makeText(LoginActivity.this, "Um ou mais campos estão vazios", Toast.LENGTH_LONG).show();
+        }
+    }
 }

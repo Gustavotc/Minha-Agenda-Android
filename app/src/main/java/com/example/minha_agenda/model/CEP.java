@@ -1,5 +1,6 @@
 package com.example.minha_agenda.model;
 
+//Class to create a Cep object model
 public class CEP {
 
     private String cep;

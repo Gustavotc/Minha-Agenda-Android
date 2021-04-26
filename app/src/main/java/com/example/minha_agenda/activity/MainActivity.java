@@ -10,18 +10,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.example.minha_agenda.R;
-import com.example.minha_agenda.RecyclerItemClickListener;
+import com.example.minha_agenda.config.RecyclerItemClickListener;
 import com.example.minha_agenda.adapter.AdapterContacts;
 import com.example.minha_agenda.config.FirebaseConfig;
 import com.example.minha_agenda.model.Contact;
@@ -33,8 +31,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
+//Class to create the MainActivity
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth userId;
@@ -68,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Find componets
+        //Find components
         userId           = FirebaseConfig.getFirebaseAuth();
         recyclerContacts = findViewById(R.id.recyclerContacts);
         editSearch       = findViewById(R.id.editSearch);
@@ -116,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 contactsList.clear();
                 contactsIdList.clear();
 
-                //List Contacts
+                //List all Contacts
                 for (DataSnapshot data: snapshot.getChildren()) {
                     Contact contact = data.getValue( Contact.class );
                     contactsIdList.add(data.getKey());
@@ -187,12 +185,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    //Function to disconnect user
     private void signOut() {
         userId.signOut();
         startActivity(new Intent(MainActivity.this, LoginActivity.class));
         finish();
     }
 
+    //Function to search contact by name
     private void searchContact(String name) {
 
     firebase.orderByChild("name").startAt(name).endAt(name+"\uf8ff").addValueEventListener(new ValueEventListener() {
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
             contactsList.clear();
             contactsIdList.clear();
 
-            //List Contacts
+            //List results
             for (DataSnapshot data: snapshot.getChildren()) {
                 Contact contact = data.getValue( Contact.class );
                 contactsIdList.add(data.getKey());
@@ -219,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //Function to order contacts list by name
     private void orderByName() {
 
         final Query contactOrder = firebase.orderByChild("name");

@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        tools:context=".activity.ContactInfoActivity">
+        tools:context=".activity.ContactInfoActivity"
+        android:background="@color/light_grey">
 
 
         <EditText
@@ -49,7 +50,6 @@
             android:id="@+id/btnEditContact"
             style="@style/custom_button"
             android:text="@string/edit_contact"
-            android:backgroundTint="@android:color/white"
             android:enabled="false"
             android:visibility="invisible"
             />

@@ -1,6 +1,6 @@
 package com.example.minha_agenda.model;
 
-//Class to create a Contact Object
+//Class to create a Contact Object model
 public class Contact {
 
     private String name;

@@ -1,7 +1,6 @@
 package com.example.minha_agenda.activity;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -9,23 +8,22 @@ import androidx.core.app.NotificationManagerCompat;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.minha_agenda.R;
 import com.example.minha_agenda.config.FirebaseConfig;
 import com.example.minha_agenda.model.CEP;
 import com.example.minha_agenda.model.Contact;
-import com.example.minha_agenda.service.HTTPService;
+import com.example.minha_agenda.config.HTTPService;
 import com.github.rtoshiro.util.format.SimpleMaskFormatter;
 import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,17 +31,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 //Class to add a new contact to the Agenda
@@ -55,6 +42,8 @@ public class NewContactActivity extends AppCompatActivity {
     private EditText editEmail;
     private EditText editCep;
     private EditText editAdress;
+    private Button btnNewPhone;
+    private Button btnNewAddress;
     private Button btnAdd;
     private DatabaseReference firebase;
 
@@ -69,17 +58,47 @@ public class NewContactActivity extends AppCompatActivity {
         //Gets auth instance
         userAuth = FirebaseConfig.getFirebaseAuth();
 
-        //Get user inputs
-        editName = findViewById(R.id.editNewContactName);
-        editPhone = findViewById(R.id.editNewContactPhone);
-        editEmail = findViewById(R.id.editNewContactEmail);
-        editCep = findViewById(R.id.editNewContactCep);
-        editAdress = findViewById(R.id.editNewContactAdress);
-        btnAdd = findViewById(R.id.btnNewContact);
+        //Find components
+        editName        = findViewById(R.id.editNewContactName);
+        editPhone       = findViewById(R.id.editNewContactPhone);
+        editEmail       = findViewById(R.id.editNewContactEmail);
+        editCep         = findViewById(R.id.editNewContactCep);
+        editAdress      = findViewById(R.id.editNewContactAdress);
+        btnAdd          = findViewById(R.id.btnNewContact);
+        btnNewPhone     = findViewById(R.id.btnNewContactPhone);
+        btnNewAddress   = findViewById(R.id.btnNewContactAddress);
+
+
+        //Todo multiple contacts and phones implementation
+        btnNewPhone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout layout = (LinearLayout) findViewById(R.id.newContactView);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,  LinearLayout.LayoutParams.WRAP_CONTENT );
+                EditText newPhone = new EditText(getApplicationContext());
+                newPhone.setLayoutParams(params);
+                newPhone.setHint("Novo telefone");
+                layout.addView(newPhone);
+            }
+        });
+
+        btnNewAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LinearLayout layout = (LinearLayout) findViewById(R.id.newContactView);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,  LinearLayout.LayoutParams.WRAP_CONTENT );
+                EditText newAddress = new EditText(getApplicationContext());
+                newAddress.setLayoutParams(params);
+                newAddress.setHint("Novo endereço");
+                layout.addView(newAddress);
+            }
+        });
+
 
         //Set edit text masks
         setMasks();
 
+        //Automatically search the address when user type 8 digits in CEP field
         editCep.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -88,7 +107,7 @@ public class NewContactActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (s.length() == 9) {
+                if (s.length() == 9) { //Length must be 9 because of the mask extra symbol
                     searchCep(s.toString());
                 } else {
                     editAdress.setText("");
@@ -103,74 +122,85 @@ public class NewContactActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String name = editName.getText().toString();
-                String phone = editPhone.getText().toString();
-                String email = editEmail.getText().toString();
-                String cep = editCep.getText().toString();
-                String adress = editAdress.getText().toString();
-
-                //Create a new contact object
-                final Contact contact = new Contact();
-                contact.setName(name);
-                contact.setPhone(phone);
-                contact.setEmail(email);
-                contact.setCep(cep);
-                contact.setAdress(adress);
-
-                //Validations
-                //Check if all informations were given
-                if (!name.isEmpty() && !phone.isEmpty() && !email.isEmpty() && !cep.isEmpty() && !adress.isEmpty()) {
-
-                    firebase = FirebaseConfig.getFirebase().child("contacts").child(userAuth.getUid()).push();
-
-                    firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                            //Case the contact name already exists
-                            if (snapshot.getValue() != null) {
-                                Toast.makeText(NewContactActivity.this, "Contato já cadastrado", Toast.LENGTH_LONG).show();
-                            } else { //Case it's a new contact name
-                                firebase.setValue(contact); //Save the new contact in the database
-                                finish();
-                                Toast.makeText(NewContactActivity.this, "Contato adicionado com sucesso", Toast.LENGTH_LONG).show();
-
-                                showNotification(contact.getName());
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                        }
-                    });
-                } else { //Case user didn't fill any text field
-                    Toast.makeText(NewContactActivity.this, "Preencha todos os campos", Toast.LENGTH_LONG).show();
-                }
+                addContact();
             }
         });
     }
 
+    //Function to add a new Contact
+    private void addContact() {
+
+        //Get user inputs
+        String name = editName.getText().toString();
+        String phone = editPhone.getText().toString();
+        String email = editEmail.getText().toString();
+        String cep = editCep.getText().toString();
+        String address = editAdress.getText().toString();
+
+        //Create a new contact object
+        final Contact contact = new Contact();
+        contact.setName(name);
+        contact.setPhone(phone);
+        contact.setEmail(email);
+        contact.setCep(cep);
+        contact.setAdress(address);
+
+        //Validations
+        //Check if all informations were given
+        if (!name.isEmpty() && !phone.isEmpty() && !email.isEmpty() && !cep.isEmpty() && !address.isEmpty()) {
+
+            //Creates a firebase instance based on the user and generates a new identifier for each contact
+            firebase = FirebaseConfig.getFirebase().child("contacts").child(userAuth.getUid()).push();
+
+            firebase.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                    //Case the contact name already exists
+                    if (snapshot.getValue() != null) {
+                        Toast.makeText(NewContactActivity.this, "Contato já cadastrado", Toast.LENGTH_LONG).show();
+                    } else { //Case it's a new contact name
+                        firebase.setValue(contact); //Save the new contact in the database
+                        finish(); //Close the current activity
+                        Toast.makeText(NewContactActivity.this, "Contato adicionado com sucesso", Toast.LENGTH_LONG).show();
+                        showNotification(contact.getName()); //Notify user
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+
+        } else { //Case user didn't fill any text field
+            Toast.makeText(NewContactActivity.this, "Preencha todos os campos", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //Function to search for an address based on the provided CEP
     private void searchCep(String cep) {
 
-        cep = cep.replaceAll("(-)", "");
+        cep = cep.replaceAll("(-)", ""); //Remove unwanted characters
 
+        //Creates a HTTP connection
         HTTPService service = new HTTPService(cep);
         try {
             CEP info = service.execute().get();
 
+            //Shows the result case it exists
             if (info.getLocalidade() != null) {
+                //If there's no street for the Cep, shows the the city
                 editAdress.setText(info.getLogradouro().equals("") ? info.getLocalidade() : info.getLogradouro());
             }
 
-        } catch (ExecutionException e) {
+        } catch (ExecutionException e) { //Treats exceptions
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
+    //Function to set masks in Phone and Cep editFields
     private void setMasks() {
 
         //Phone mask
@@ -184,7 +214,7 @@ public class NewContactActivity extends AppCompatActivity {
         editCep.addTextChangedListener(maskCep);
     }
 
-
+    //Function to show a notification when a new contact is added
     private void showNotification(String name) {
         createNotificationChannel();
 
@@ -208,6 +238,7 @@ public class NewContactActivity extends AppCompatActivity {
         notificationManager.notify(1, builder.build());
     }
 
+    //Function to create a notification channel to prevent errors
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library

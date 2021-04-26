@@ -20,15 +20,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.google.firebase.auth.FirebaseUser;
 
+//Class to create the signup activity
 public class SignupActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
     private Button btnSignup;
     private User user;
-
     private FirebaseAuth auth;
 
     @Override
@@ -36,9 +35,11 @@ public class SignupActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
+        //SupportActionBar configs
         getSupportActionBar().setElevation(0);
         getSupportActionBar().setTitle("Cadastre-se");
 
+        //Find components
         email       = findViewById(R.id.edit_signup_email);
         password    = findViewById(R.id.edit_signup_password);
         btnSignup   = findViewById(R.id.btnSignUp);
@@ -46,23 +47,27 @@ public class SignupActivity extends AppCompatActivity {
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                user = new User();
-                user.setEmail( email.getText().toString() );
-                user.setPassword( password.getText().toString() );
-
-                //Verify empty fields
-                if (!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty()){
-                    createUser();
-                }
-                else {
-                    Toast.makeText(SignupActivity.this, "Um ou mais campos estão vazios", Toast.LENGTH_LONG).show();
-                }
-
+                verifyFields();
             }
         });
     }
 
+    //Function to verify if all fields were filled and create a new user object
+    private void verifyFields() {
+        user = new User();
+        user.setEmail( email.getText().toString() );
+        user.setPassword( password.getText().toString() );
+
+        //Verify empty fields
+        if (!email.getText().toString().isEmpty() && !password.getText().toString().isEmpty()){
+            createUser();
+        }
+        else {
+            Toast.makeText(SignupActivity.this, "Um ou mais campos estão vazios", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    //Function to create a new user in the Database
     private void createUser() {
         auth = FirebaseConfig.getFirebaseAuth();
         auth.createUserWithEmailAndPassword(
