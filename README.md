@@ -31,7 +31,7 @@ This app features all the latest tools and practices in mobile development!
 
 - **Java** — Language used to develop the app.
 - **Firebase** — Database used for users and contacts storage and manipulations
-- **Firebase authentication (sign up, login, logout)
+- **Firebase authentication (sign up, login, logout)**
 - **ViaCEP** — API used to get contact address automatically
 - **Contacts search with auto-suggestion**
 - **Contacts list ordenation option**
