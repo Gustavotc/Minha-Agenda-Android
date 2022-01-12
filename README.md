@@ -32,7 +32,9 @@ This app features all the latest tools and practices in mobile development!
 - **Java** — Language used to develop the app.
 - **Firebase** — Database used for users and contacts storage and manipulations
 - **ViaCEP** — API used to get contact address automatically
-
+- **Busca de contatos com sugestão**
+- **Ordenações para listagem de contatos**
+- **Push notification ao salvar contato** 
 
 ## Getting started
 
